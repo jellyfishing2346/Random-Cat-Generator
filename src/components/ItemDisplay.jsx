@@ -1,4 +1,4 @@
-// src/components/ItemDisplay.js
+// src/components/ItemDisplay.jsx
 import React from 'react';
 
 const ItemDisplay = ({ currentItem, isLoading, error, addToBanList, fetchRandomItem }) => {
