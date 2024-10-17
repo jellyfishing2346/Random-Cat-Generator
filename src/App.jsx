@@ -1,8 +1,6 @@
-// src/App.js
-import React, { useState, useEffect } from 'react';
-import ItemDisplay from './components/ItemDisplay';
+// src/App.jsx
+import React, { useState } from 'react';
 import BanList from './components/BanList';
-import History from './components/History';
 import useApi from './hooks/useApi';
 import './App.css';
 
@@ -16,7 +14,6 @@ const App = () => {
     }));
   };
 
-  
   const apiEndpoint = 'https://api.thecatapi.com/v1/images/search?has_breeds=1';
   const { data, isLoading, error, fetchRandomItem } = useApi(apiEndpoint, banList);
 
@@ -28,11 +25,14 @@ const App = () => {
   };
 
   const handleBanBreed = () => {
-    if (data && data.breed) {
+    if (data && data.breed && data.breed !== 'Unknown') {
       setBanList(prevBanList => ({
         ...prevBanList,
-        breed: [...prevBanList.breed, data.breed]
+        breed: [...new Set([...prevBanList.breed, data.breed, data.weight, data.height, data.lifeSpan])]
       }));
+    } else {
+      console.log("Cannot ban unknown breed");
+      alert("Cannot ban unknown breed");
     }
   };
 
@@ -46,7 +46,15 @@ const App = () => {
         <div>
           <img src={data.url} alt="Random Cat" style={{ maxWidth: '300px' }} />
           <p>Breed: {data.breed}</p>
-          <button onClick={handleBanBreed}>Ban this breed</button>
+          <p>Description: {data.breedDescription}</p>
+          <p>Weight: {data.weight} kg</p>
+          <p>Height: {data.height}</p>
+          <p>Life Span: {data.lifeSpan}</p>
+          {data.breed !== 'Unknown' ? (
+            <button onClick={handleBanBreed}>Ban this breed</button>
+          ) : (
+            <p>Cannot ban unknown breeds</p>
+          )}
         </div>
       )}
       <BanList banList={banList} onRemoveItem={handleRemoveItem} />
@@ -55,3 +63,4 @@ const App = () => {
 };
 
 export default App;
+
