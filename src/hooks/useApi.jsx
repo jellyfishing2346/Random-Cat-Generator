@@ -26,22 +26,40 @@ const useApi = (apiEndpoint, banList) => {
 
       const fullJsonData = await fullResponse.json();
 
+      console.log("Full JSON Data:", fullJsonData);
+
       // Extract breed information
       let breed = "Unknown";
+      let breedDescription = "No description available";
+      let weight = "Unknown";
+      let height = "Unknown";
+      let lifeSpan = "Unknown";
+
       if (
         fullJsonData &&
         fullJsonData.breeds &&
         fullJsonData.breeds.length > 0
       ) {
-        breed = fullJsonData.breeds[0].name;
+        const breedInfo = fullJsonData.breeds[0];
+        breed = breedInfo.name;
+        breedDescription = breedInfo.description || "No description available";
+        weight = breedInfo.weight?.metric || "Unknown";
+        height = "Not provided by API"; // The API doesn't provide height information
+        lifeSpan = breedInfo.life_span || "Unknown";
       }
-      console.log("Breed:", breed); // Log the breed for debugging
+
+      console.log("Breed:", breed);
+      console.log("Breed Description:", breedDescription);
+      console.log("Weight:", weight);
+      console.log("Height:", height);
+      console.log("Life Span:", lifeSpan);
 
       // Check if the item is banned
       const isItemBanned = banList.breed && banList.breed.includes(breed);
 
       if (!isItemBanned) {
-        const newItem = {...item, breed};
+        const newItem = {...item, breed, breedDescription, weight, height, lifeSpan};
+        console.log("New Item:", newItem);
         setData(newItem);
         return newItem;
       } else {
